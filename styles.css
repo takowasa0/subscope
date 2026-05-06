@@ -20,6 +20,10 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   background:
@@ -30,6 +34,7 @@ body {
   font-family: "Segoe UI", "Yu Gothic UI", Meiryo, sans-serif;
   min-height: 100vh;
   overflow: hidden;
+  overflow-x: hidden;
 }
 
 body::before {
@@ -452,6 +457,8 @@ button {
   margin: 0 auto;
   max-width: 520px;
   min-height: 0;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .topbar {
@@ -506,28 +513,33 @@ body[data-theme="dark"] .mode-badge {
 
 @media (max-width: 620px) {
   .topbar {
+    display: grid;
     align-items: flex-start;
-    flex-wrap: wrap;
+    grid-template-columns: 50px minmax(0, 1fr);
     gap: 10px;
     padding: 14px 12px 10px;
   }
 
   .mode-badge {
-    left: 18px;
-    top: 14px;
+    grid-column: 1;
+    grid-row: 1;
+    left: auto;
+    position: static;
+    top: auto;
   }
 
   .topbar > div:not(.mode-badge) {
-    flex: 1 1 100%;
+    grid-column: 2;
     min-width: 0;
-    padding-left: 58px;
+    padding-left: 0;
   }
 
   .topbar h1 {
-    font-size: 24px;
-    line-height: 1.18;
+    font-size: 22px;
+    line-height: 1.22;
     max-width: 100%;
-    word-break: keep-all;
+    overflow-wrap: anywhere;
+    word-break: normal;
   }
 
   .topbar .eyebrow {
@@ -536,14 +548,44 @@ body[data-theme="dark"] .mode-badge {
   }
 
   .topbar .connect-button {
-    flex: 1 1 auto;
-    margin-left: 58px;
-    max-width: calc(100% - 58px);
+    grid-column: 1 / -1;
+    margin-left: 0;
+    max-width: 100%;
     min-height: 38px;
+    min-width: 0;
     overflow: hidden;
     padding: 0 12px;
     text-overflow: ellipsis;
     white-space: nowrap;
+    width: 100%;
+  }
+
+  .section-title,
+  .block-heading {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .home-title-actions {
+    align-items: stretch;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: stretch;
+    width: 100%;
+  }
+
+  .home-title-actions > *,
+  .compact-mode-select {
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .app-main {
+    overflow-x: hidden;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 
@@ -643,10 +685,10 @@ h3 {
 }
 
 .mode-select {
-  background: var(--card);
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
-  color: var(--text);
+  color: var(--ink);
   font-weight: 800;
   min-height: 44px;
   padding: 10px 12px;
