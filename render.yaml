@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: subscope
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT
+    autoDeploy: true
+    envVars:
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        value: https://subscope.org/auth/callback
+      - key: APP_BASE_URL
+        value: https://subscope.org
+      - key: CONTACT_EMAIL
+        value: rukia5972@gmail.com
+      - key: DATA_DIR
+        value: /opt/render/project/src/data
+    disk:
+      name: subscope-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1

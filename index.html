@@ -1,0 +1,369 @@
+﻿<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ユーチューブらくらく管理</title>
+    <link rel="icon" href="assets/logo-256.png" />
+    <link rel="stylesheet" href="styles.css?v=29" />
+  </head>
+  <body>
+    <section class="auth-gate" id="authGate" aria-label="Google連携">
+      <div class="auth-card">
+        <div class="brand-mark">▶</div>
+        <p class="eyebrow">First Setup</p>
+        <h2>YouTubeアカウントを連携</h2>
+        <p class="auth-copy">
+          登録チャンネルを取得して、ジャンルごとに自動整理します。初回のみGoogleアカウントでYouTubeへのアクセス許可が必要です。
+        </p>
+        <div class="permission-list">
+          <div>
+            <strong>取得する情報</strong>
+            <span>登録チャンネル、チャンネル概要、新着動画</span>
+          </div>
+          <div>
+            <strong>取得しない情報</strong>
+            <span>パスワード、動画のダウンロード、YouTube外の個人データ</span>
+          </div>
+        </div>
+        <button class="google-button" id="googleLoginButton" type="button">
+          <span>G</span>
+          GoogleでYouTube連携
+        </button>
+        <p class="auth-note">OAuth 2.0で連携し、許可はGoogleアカウント側からいつでも解除できます。</p>
+      </div>
+    </section>
+
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="mode-badge" id="modeBadge" aria-hidden="true"></div>
+        <div>
+          <p class="eyebrow">YouTube Channel Organizer</p>
+          <h1>ユーチューブらくらく管理</h1>
+        </div>
+        <button class="connect-button" id="syncButton" type="button">Google連携</button>
+      </header>
+
+      <main class="app-main">
+        <section class="screen active" id="home" aria-label="ホーム">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Today</p>
+              <h2>今日のおすすめ</h2>
+            </div>
+            <div class="home-title-actions">
+              <select class="mode-select compact-mode-select" id="homeClassificationMode" aria-label="ジャンル分類モード"></select>
+              <button class="reload-button" id="recommendReloadButton" type="button">今日のおすすめを再選択</button>
+              <span class="sync-state" id="syncState">デモデータ</span>
+            </div>
+          </div>
+
+          <div class="hero-video" id="heroVideo"></div>
+
+          <div class="metric-grid">
+            <article>
+              <span>登録チャンネル</span>
+              <strong id="totalChannels">0</strong>
+            </article>
+            <article>
+              <span>未分類</span>
+              <strong id="uncategorizedCount">0</strong>
+            </article>
+            <article>
+              <span>未視聴</span>
+              <strong id="unwatchedCount">0</strong>
+            </article>
+          </div>
+
+          <section class="content-block">
+            <div class="block-heading">
+              <h3>最近よく見るジャンル</h3>
+            </div>
+            <div class="genre-strip" id="topGenres"></div>
+          </section>
+
+          <section class="content-block">
+            <div class="block-heading">
+              <h3>お気に入り更新</h3>
+            </div>
+            <div class="compact-list" id="favoriteUpdates"></div>
+          </section>
+        </section>
+
+        <section class="screen" id="channels" aria-label="チャンネル">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Library</p>
+              <h2>チャンネル整理</h2>
+            </div>
+            <button class="ghost-button" id="classifyButton" type="button">自動分類</button>
+          </div>
+
+          <p class="filter-caption">検索: チャンネル名 / メインジャンル</p>
+          <div class="tool-row">
+            <input id="channelSearch" type="search" placeholder="チャンネル名・タグで検索" />
+            <select id="genreFilter" aria-label="ジャンル">
+              <option value="all">すべて</option>
+            </select>
+          </div>
+          <p class="filter-caption">サブタグで絞り込み</p>
+          <div class="subtag-filter-row" aria-label="チャンネルサブタグ">
+            <select id="channelSubTagFilter1"><option value="all">サブタグA</option></select>
+            <select id="channelSubTagFilter2"><option value="all">サブタグB</option></select>
+            <select id="channelSubTagFilter3"><option value="all">サブタグC</option></select>
+          </div>
+
+          <section class="organize-panel" aria-label="未分類整理">
+            <div>
+              <strong>未分類をまとめて整理</strong>
+              <p id="organizeSummary">未分類チャンネルを確認して、候補ジャンルへ振り分けます。</p>
+            </div>
+            <div class="organize-actions">
+              <button class="small-button" id="showUnknownButton" type="button">未分類だけ表示</button>
+              <button class="small-button" id="reclassifyButton" type="button">分類を再計算</button>
+            </div>
+          </section>
+
+          <div class="channel-list" id="channelList"></div>
+
+          <div class="bulk-organizer" id="bulkOrganizer"></div>
+        </section>
+
+        <section class="screen" id="new" aria-label="新着">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Fresh</p>
+              <h2>新着動画</h2>
+            </div>
+            <button class="ghost-button" id="refreshVideosButton" type="button">新着を更新</button>
+          </div>
+
+          <div class="segmented" id="dateFilter">
+            <button data-range="1" type="button">今日</button>
+            <button data-range="3" type="button">3日</button>
+            <button class="active" data-range="7" type="button">7日</button>
+          </div>
+
+          <label class="check-row">
+            <input id="unwatchedOnly" type="checkbox" checked />
+            未視聴だけ表示
+          </label>
+
+          <p class="filter-caption">検索: チャンネル名 / メインジャンル / 動画種別 / 時間</p>
+          <div class="tool-row filter-row">
+            <input id="newChannelSearch" type="search" placeholder="チャンネル名で検索" />
+            <select id="newGenreFilter" aria-label="新着ジャンル">
+              <option value="all">すべて</option>
+            </select>
+            <select id="newKindFilter" aria-label="新着ショート区分">
+              <option value="all">動画すべて</option>
+              <option value="short">ショートのみ</option>
+              <option value="video">ショート以外</option>
+              <option value="live">ライブ配信</option>
+            </select>
+            <select id="newDurationFilter" aria-label="新着動画時間">
+              <option value="all">時間すべて</option>
+              <option value="under1">1分以内</option>
+              <option value="1to10">1〜10分</option>
+              <option value="10to30">10〜30分</option>
+              <option value="30to60">30分〜1時間</option>
+              <option value="60to180">1〜3時間</option>
+              <option value="over180">3時間以上</option>
+            </select>
+          </div>
+          <p class="filter-caption">サブタグで絞り込み</p>
+          <div class="subtag-filter-row" aria-label="新着サブタグ">
+            <select id="newSubTagFilter1"><option value="all">サブタグA</option></select>
+            <select id="newSubTagFilter2"><option value="all">サブタグB</option></select>
+            <select id="newSubTagFilter3"><option value="all">サブタグC</option></select>
+          </div>
+
+          <div class="video-list" id="videoList"></div>
+        </section>
+
+        <section class="screen" id="analytics" aria-label="分析">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Insight</p>
+              <h2>視聴傾向</h2>
+            </div>
+          </div>
+
+          <section class="analytics-layout">
+            <div class="donut-card">
+              <div class="donut" id="channelGenreDonut"></div>
+              <div>
+                <h3>ジャンル割合</h3>
+                <p>登録チャンネルと高評価動画から集計</p>
+              </div>
+            </div>
+            <div class="bar-card">
+              <h3>登録・高評価の内訳</h3>
+              <div id="channelGenreBars"></div>
+            </div>
+            <div class="donut-card">
+              <div class="donut" id="likedGenreDonut"></div>
+              <div>
+                <h3>高評価動画のジャンル割合</h3>
+                <p>高評価した動画を動画ごとのジャンルで集計</p>
+              </div>
+            </div>
+            <div class="bar-card">
+              <h3>高評価動画内訳</h3>
+              <div id="likedGenreBars"></div>
+            </div>
+          </section>
+
+          <section class="content-block">
+            <div class="block-heading">
+              <h3>よく見るチャンネル</h3>
+            </div>
+            <div class="compact-list" id="popularChannels"></div>
+          </section>
+        </section>
+
+        <section class="screen" id="liked" aria-label="高評価">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Liked Videos</p>
+              <h2>高評価動画</h2>
+            </div>
+            <button class="ghost-button" id="refreshLikedButton" type="button">高評価を更新</button>
+          </div>
+
+          <section class="organize-panel">
+            <div>
+              <strong>動画ごとにジャンル分類</strong>
+              <p id="likedSummary">YouTubeで高く評価した動画を取得し、チャンネルではなく動画単位で分類します。</p>
+            </div>
+          </section>
+
+          <p class="filter-caption">検索: 動画名・チャンネル名 / メインジャンル / 動画種別 / 時間</p>
+          <div class="tool-row filter-row">
+            <input id="likedChannelSearch" type="search" placeholder="動画名・チャンネル名で検索" />
+            <select id="likedGenreFilter" aria-label="高評価ジャンル">
+              <option value="all">すべて</option>
+            </select>
+            <select id="likedKindFilter" aria-label="高評価ショート区分">
+              <option value="all">動画すべて</option>
+              <option value="short">ショートのみ</option>
+              <option value="video">ショート以外</option>
+              <option value="live">ライブ配信</option>
+            </select>
+            <select id="likedDurationFilter" aria-label="高評価動画時間">
+              <option value="all">時間すべて</option>
+              <option value="under1">1分以内</option>
+              <option value="1to10">1〜10分</option>
+              <option value="10to30">10〜30分</option>
+              <option value="30to60">30分〜1時間</option>
+              <option value="60to180">1〜3時間</option>
+              <option value="over180">3時間以上</option>
+            </select>
+          </div>
+          <p class="filter-caption">サブタグで絞り込み</p>
+          <div class="subtag-filter-row" aria-label="高評価サブタグ">
+            <select id="likedSubTagFilter1"><option value="all">サブタグA</option></select>
+            <select id="likedSubTagFilter2"><option value="all">サブタグB</option></select>
+            <select id="likedSubTagFilter3"><option value="all">サブタグC</option></select>
+          </div>
+
+          <div class="video-list" id="likedVideoList"></div>
+        </section>
+
+        <section class="screen" id="settings" aria-label="設定">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Settings</p>
+              <h2>設定</h2>
+            </div>
+          </div>
+
+          <div class="settings-list">
+            <div class="account-status" id="accountStatus"></div>
+            <label class="setting-row">
+              <span>
+                <strong>ジャンル分類モード</strong>
+                <small id="classificationModeHelp">目的に合わせてジャンルの深掘り方を変えます</small>
+              </span>
+              <select id="classificationMode"></select>
+            </label>
+            <label class="setting-row">
+              <span>
+                <strong>画面モード</strong>
+                <small>ライト/ダークを切り替えます</small>
+              </span>
+              <select id="themeMode">
+                <option value="light">ライト</option>
+                <option value="dark">ダーク</option>
+              </select>
+            </label>
+            <label class="setting-row">
+              <span>
+                <strong>文字色テーマ</strong>
+                <small>アクセントカラーを変更します</small>
+              </span>
+              <select id="accentMode">
+                <option value="red">YouTubeレッド</option>
+                <option value="blue">ブルー</option>
+                <option value="green">グリーン</option>
+              </select>
+            </label>
+            <label class="setting-row">
+              <span>
+                <strong>表示密度</strong>
+                <small>カードの余白を調整します</small>
+              </span>
+              <select id="densityMode">
+                <option value="comfortable">標準</option>
+                <option value="compact">コンパクト</option>
+              </select>
+            </label>
+            <button class="wide-button" id="pluginSettingsButton" type="button">YouTube補助機能を設定</button>
+            <div class="legal-links">
+              <a href="/privacy.html" target="_blank" rel="noreferrer">プライバシーポリシー</a>
+              <a href="/terms.html" target="_blank" rel="noreferrer">利用規約</a>
+            </div>
+            <button class="wide-button secondary-button" id="deleteLocalDataButton" type="button">保存データを削除</button>
+            <button class="wide-button secondary-button" id="logoutButton" type="button">ログアウト</button>
+            <label class="setting-row">
+              <span>
+                <strong>お気に入り新着通知</strong>
+                <small>更新があった時に通知</small>
+              </span>
+              <input type="checkbox" checked />
+            </label>
+            <label class="setting-row">
+              <span>
+                <strong>最近見てない通知</strong>
+                <small>14日以上開いていないチャンネルを通知</small>
+              </span>
+              <input type="checkbox" checked />
+            </label>
+            <button class="wide-button" id="exportButton" type="button">データを書き出す</button>
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="下部ナビゲーション">
+        <button class="active" data-tab="home" type="button"><span>⌂</span>ホーム</button>
+        <button data-tab="channels" type="button"><span>▦</span>チャンネル</button>
+        <button data-tab="new" type="button"><span>▶</span>新着</button>
+        <button data-tab="liked" type="button"><span>♡</span>高評価</button>
+        <button data-tab="analytics" type="button"><span>◔</span>分析</button>
+        <button data-tab="settings" type="button"><span>⚙</span>設定</button>
+      </nav>
+    </div>
+
+    <dialog id="channelDialog">
+      <form method="dialog">
+        <div id="channelDetail"></div>
+        <menu>
+          <button value="close" type="submit">閉じる</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <script src="app.js?v=36"></script>
+  </body>
+</html>
+
