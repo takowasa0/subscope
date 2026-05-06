@@ -505,13 +505,45 @@ body[data-theme="dark"] .mode-badge {
 }
 
 @media (max-width: 620px) {
+  .topbar {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 12px 10px;
+  }
+
   .mode-badge {
     left: 18px;
     top: 14px;
   }
 
   .topbar > div:not(.mode-badge) {
+    flex: 1 1 100%;
+    min-width: 0;
     padding-left: 58px;
+  }
+
+  .topbar h1 {
+    font-size: 24px;
+    line-height: 1.18;
+    max-width: 100%;
+    word-break: keep-all;
+  }
+
+  .topbar .eyebrow {
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  .topbar .connect-button {
+    flex: 1 1 auto;
+    margin-left: 58px;
+    max-width: calc(100% - 58px);
+    min-height: 38px;
+    overflow: hidden;
+    padding: 0 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
