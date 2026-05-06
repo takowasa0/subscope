@@ -41,6 +41,19 @@ body {
   overflow-x: hidden;
 }
 
+body:not(.legal-page) {
+  inset: 0;
+  position: fixed;
+  width: 100%;
+}
+
+body.legal-page {
+  height: auto;
+  min-height: 100vh;
+  overflow: auto;
+  position: static;
+}
+
 body::before {
   content: "";
   inset: 0;
@@ -455,15 +468,17 @@ button {
 .app-shell {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100dvh;
-  height: 100svh;
+  bottom: 0;
+  height: auto;
+  left: 0;
   margin: 0 auto;
   max-width: 520px;
   min-height: 0;
   overscroll-behavior: none;
-  position: relative;
+  position: fixed;
   overflow-x: hidden;
+  right: 0;
+  top: 0;
   width: 100%;
 }
 
@@ -473,8 +488,7 @@ button {
   display: flex;
   justify-content: space-between;
   padding: 20px 18px 12px;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 12;
 }
 
@@ -618,7 +632,7 @@ body[data-theme="dark"] .mode-badge {
   }
 
   .filter-row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
   }
 
   .filter-row input {
@@ -633,6 +647,13 @@ body[data-theme="dark"] .mode-badge {
   .filter-row select {
     font-size: 16px;
     min-height: 48px;
+    padding-left: 14px;
+    padding-right: 30px;
+  }
+
+  .filter-row select:nth-of-type(2),
+  .filter-row select:nth-of-type(3) {
+    min-width: 0;
   }
 
   .subtag-filter-row {
@@ -1147,14 +1168,16 @@ select {
 
 select {
   background-image:
-    linear-gradient(45deg, transparent 50%, currentColor 50%),
-    linear-gradient(135deg, currentColor 50%, transparent 50%);
+    linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+    linear-gradient(135deg, var(--ink) 50%, transparent 50%);
   background-position:
-    calc(100% - 18px) 50%,
-    calc(100% - 12px) 50%;
+    calc(100% - 17px) 50%,
+    calc(100% - 11px) 50%;
   background-repeat: no-repeat;
   background-size: 6px 6px, 6px 6px;
+  line-height: 1.25;
   overflow: hidden;
+  padding-left: 12px;
   padding-right: 34px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1737,8 +1760,6 @@ select:focus {
   grid-template-columns: repeat(6, 1fr);
   max-width: 520px;
   padding: 8px 8px 10px;
-  position: sticky;
-  bottom: 0;
   width: 100%;
   z-index: 10;
 }
@@ -1867,10 +1888,48 @@ dialog button {
   }
 }
 
+@media (max-width: 620px) {
+  .tool-row {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-row {
+    grid-template-columns: minmax(0, .94fr) minmax(0, 1.06fr);
+  }
+
+  .filter-row input {
+    grid-column: 1 / -1;
+  }
+
+  .filter-row select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .filter-row select:nth-of-type(1) {
+    grid-column: 1 / -1;
+  }
+
+  .filter-row select:nth-of-type(2),
+  .filter-row select:nth-of-type(3) {
+    grid-row: auto;
+  }
+
+  .subtag-filter-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .subtag-filter-row select {
+    min-width: 0;
+  }
+
+  .subtag-filter-row select:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 380px) {
   .tool-row,
-  .filter-row,
-  .subtag-filter-row,
   .hero-video,
   .video-card,
   .donut-card,
