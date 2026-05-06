@@ -587,6 +587,36 @@ body[data-theme="dark"] .mode-badge {
     padding-left: 12px;
     padding-right: 12px;
   }
+
+  .tool-row {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filter-row input {
+    grid-column: 1 / -1;
+  }
+
+  .filter-row select,
+  .subtag-filter-row select {
+    min-width: 0;
+  }
+
+  .filter-row select {
+    font-size: 16px;
+    min-height: 48px;
+  }
+
+  .subtag-filter-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .subtag-filter-row select:last-child {
+    grid-column: 1 / -1;
+  }
 }
 
 .eyebrow {
@@ -1066,14 +1096,32 @@ h3 {
 
 input,
 select {
+  appearance: none;
+  -webkit-appearance: none;
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--ink);
+  font-size: 16px;
   min-height: 44px;
   padding: 10px 12px;
   width: 100%;
   transition: border-color var(--ease), box-shadow var(--ease), transform var(--ease);
+}
+
+select {
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%;
+  background-repeat: no-repeat;
+  background-size: 6px 6px, 6px 6px;
+  overflow: hidden;
+  padding-right: 34px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 input:focus,
