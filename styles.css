@@ -21,7 +21,9 @@
 }
 
 html {
+  height: 100%;
   overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 body {
@@ -32,7 +34,9 @@ body {
     var(--bg);
   color: var(--ink);
   font-family: "Segoe UI", "Yu Gothic UI", Meiryo, sans-serif;
+  height: 100%;
   min-height: 100vh;
+  overscroll-behavior: none;
   overflow: hidden;
   overflow-x: hidden;
 }
@@ -454,19 +458,25 @@ button {
   flex-direction: column;
   height: 100vh;
   height: 100dvh;
+  height: 100svh;
   margin: 0 auto;
   max-width: 520px;
   min-height: 0;
+  overscroll-behavior: none;
+  position: relative;
   overflow-x: hidden;
   width: 100%;
 }
 
 .topbar {
   align-items: center;
+  flex: 0 0 auto;
   display: flex;
   justify-content: space-between;
   padding: 20px 18px 12px;
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 12;
 }
 
 .mode-badge {
@@ -597,6 +607,11 @@ body[data-theme="dark"] .mode-badge {
     overflow-x: hidden;
     padding-left: 12px;
     padding-right: 12px;
+    scrollbar-width: none;
+  }
+
+  .app-main::-webkit-scrollbar {
+    display: none;
   }
 
   .tool-row {
@@ -705,8 +720,10 @@ h3 {
 .app-main {
   flex: 1;
   min-height: 0;
+  overscroll-behavior: contain;
   overflow-y: auto;
   padding: 0 14px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .screen {
@@ -1721,6 +1738,8 @@ select:focus {
   grid-template-columns: repeat(6, 1fr);
   max-width: 520px;
   padding: 8px 8px 10px;
+  position: sticky;
+  bottom: 0;
   width: 100%;
   z-index: 10;
 }
