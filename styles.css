@@ -562,9 +562,20 @@ body[data-theme="dark"] .mode-badge {
 
   .section-title,
   .block-heading {
-    align-items: stretch;
+    align-items: flex-start;
     flex-direction: column;
     gap: 10px;
+    text-align: left;
+  }
+
+  .section-title > div,
+  .block-heading > div {
+    width: 100%;
+  }
+
+  .section-title h2,
+  .section-title .eyebrow {
+    text-align: left;
   }
 
   .home-title-actions {
@@ -612,6 +623,15 @@ body[data-theme="dark"] .mode-badge {
 
   .subtag-filter-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .subtag-filter-row select {
+    background-position:
+      calc(100% - 15px) 50%,
+      calc(100% - 9px) 50%;
+    font-size: 15px;
+    padding-left: 10px;
+    padding-right: 26px;
   }
 
   .subtag-filter-row select:last-child {
