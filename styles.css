@@ -331,7 +331,6 @@ body[data-theme="dark"] .genre-section-unknown {
 
 body.locked .app-shell {
   filter: blur(2px);
-  pointer-events: none;
   user-select: none;
 }
 
