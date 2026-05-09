@@ -20,6 +20,7 @@ VIDEOS_FILE = DATA_DIR / "videos.json"
 LIKED_VIDEOS_FILE = DATA_DIR / "liked_videos.json"
 APP_BASE_URL = os.environ.get("APP_BASE_URL", "").rstrip("/")
 PRODUCTION_HTTPS = APP_BASE_URL.startswith("https://")
+HTTPS_HOSTS = {"subscope.org", "www.subscope.org"}
 
 app = Flask(__name__, static_folder=str(BASE_DIR), static_url_path="")
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", secrets.token_hex(32))
@@ -32,14 +33,16 @@ app.config.update(
 
 @app.before_request
 def enforce_https():
-    if not PRODUCTION_HTTPS:
-        return None
-
     forwarded_proto = request.headers.get("X-Forwarded-Proto", request.scheme)
     forwarded_proto = forwarded_proto.split(",", 1)[0].strip()
     forwarded_host = request.headers.get("X-Forwarded-Host", request.host)
     forwarded_host = forwarded_host.split(",", 1)[0].strip()
-    if forwarded_proto == "https" or forwarded_host.startswith(("127.0.0.1", "localhost")):
+    forwarded_hostname = forwarded_host.split(":", 1)[0]
+    should_force_https = PRODUCTION_HTTPS or forwarded_hostname in HTTPS_HOSTS
+    if not should_force_https:
+        return None
+
+    if forwarded_proto == "https" or forwarded_hostname in {"127.0.0.1", "localhost"}:
         return None
 
     return redirect(request.url.replace("http://", "https://", 1), code=308)
