@@ -1,5 +1,6 @@
 ﻿const STORAGE_KEY = "subscope-demo-v3";
-const API_BASE = location.port === "5000" ? "" : "http://127.0.0.1:5000";
+const isLocalPreview = ["127.0.0.1", "localhost"].includes(location.hostname) && location.port !== "5000";
+const API_BASE = isLocalPreview ? "http://127.0.0.1:5000" : "";
 let backendAvailable = false;
 
 const genres = {
@@ -363,7 +364,7 @@ function renderAuthState() {
 }
 
 function completeGoogleConnect() {
-  if (backendAvailable) {
+  if (backendAvailable || !isLocalPreview) {
     location.href = `${API_BASE}/auth/login`;
     return;
   }
@@ -390,8 +391,11 @@ async function syncWithBackend() {
     if (!meResponse.ok) return;
     backendAvailable = true;
     const me = await meResponse.json();
-    if (!me.connected && !me.channelCount) {
+    if (!me.connected) {
       state.synced = false;
+      state.connectedAccount = "";
+      state.connectedEmail = "";
+      state.connectedPicture = "";
       saveState();
       render();
       return;
